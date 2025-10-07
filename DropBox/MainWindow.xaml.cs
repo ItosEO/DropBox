@@ -77,12 +77,76 @@ namespace DropBox
         private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateItemCount();
+            UpdateLatestItem();
         }
 
         private void UpdateItemCount()
         {
-            ItemCountText.Text = $"{Items.Count} items";
+            ItemCountText.Text = $"{Items.Count} item{(Items.Count != 1 ? "s" : "")}";
             EmptyStatePanel.Visibility = Items.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+            LatestItemPanel.Visibility = Items.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            ShowAllButton.Visibility = Items.Count > 1 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private async void UpdateLatestItem()
+        {
+            if (Items.Count == 0) return;
+
+            var latestItem = Items[Items.Count - 1];
+            
+            LatestItemName.Text = latestItem.Name;
+            LatestIconGlyph.Glyph = latestItem.IconGlyph;
+            
+            // 如果是图片，显示缩略图
+            if (latestItem.Type == DropItemType.Bitmap && latestItem.BitmapStream != null)
+            {
+                try
+                {
+                    var bitmapImage = new BitmapImage();
+                    latestItem.BitmapStream.Seek(0);
+                    await bitmapImage.SetSourceAsync(latestItem.BitmapStream);
+                    LatestThumbnail.Source = bitmapImage;
+                    LatestThumbnail.Visibility = Visibility.Visible;
+                    LatestIcon.Visibility = Visibility.Collapsed;
+                }
+                catch
+                {
+                    LatestThumbnail.Visibility = Visibility.Collapsed;
+                    LatestIcon.Visibility = Visibility.Visible;
+                }
+            }
+            else if (latestItem.Type == DropItemType.File && latestItem.StorageFile != null)
+            {
+                // 尝试加载图片文件缩略图
+                var fileType = latestItem.StorageFile.FileType.ToLower();
+                if (fileType == ".jpg" || fileType == ".jpeg" || fileType == ".png" || fileType == ".gif" || fileType == ".bmp")
+                {
+                    try
+                    {
+                        using var stream = await latestItem.StorageFile.OpenReadAsync();
+                        var bitmapImage = new BitmapImage();
+                        await bitmapImage.SetSourceAsync(stream);
+                        LatestThumbnail.Source = bitmapImage;
+                        LatestThumbnail.Visibility = Visibility.Visible;
+                        LatestIcon.Visibility = Visibility.Collapsed;
+                    }
+                    catch
+                    {
+                        LatestThumbnail.Visibility = Visibility.Collapsed;
+                        LatestIcon.Visibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    LatestThumbnail.Visibility = Visibility.Collapsed;
+                    LatestIcon.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                LatestThumbnail.Visibility = Visibility.Collapsed;
+                LatestIcon.Visibility = Visibility.Visible;
+            }
         }
 
         private void Grid_DragOver(object sender, DragEventArgs e)
@@ -269,6 +333,62 @@ namespace DropBox
             if (sender is Button button && button.Tag is DropItem item)
             {
                 Items.Remove(item);
+            }
+        }
+
+        private void ShowAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            var allItemsWindow = new AllItemsWindow(Items, (item) =>
+            {
+                Items.Remove(item);
+            });
+            allItemsWindow.Activate();
+        }
+
+        private async void LatestItem_DragStarting(UIElement sender, DragStartingEventArgs args)
+        {
+            if (Items.Count == 0) return;
+
+            var item = Items[Items.Count - 1];
+            var deferral = args.GetDeferral();
+
+            try
+            {
+                switch (item.Type)
+                {
+                    case DropItemType.File:
+                        if (item.StorageFile != null)
+                        {
+                            args.Data.SetStorageItems(new List<IStorageItem> { item.StorageFile });
+                        }
+                        break;
+
+                    case DropItemType.Folder:
+                        if (item.StorageFolder != null)
+                        {
+                            args.Data.SetStorageItems(new List<IStorageItem> { item.StorageFolder });
+                        }
+                        break;
+
+                    case DropItemType.Text:
+                        args.Data.SetText(item.TextContent);
+                        break;
+
+                    case DropItemType.Bitmap:
+                        if (item.BitmapStream != null)
+                        {
+                            var tempFile = await CreateTempFileFromBitmap(item.BitmapStream);
+                            args.Data.SetStorageItems(new List<IStorageItem> { tempFile });
+                            args.Data.SetBitmap(RandomAccessStreamReference.CreateFromStream(item.BitmapStream));
+                        }
+                        break;
+                }
+
+                args.Data.RequestedOperation = DataPackageOperation.Copy;
+            }
+            finally
+            {
+                deferral.Complete();
             }
         }
 

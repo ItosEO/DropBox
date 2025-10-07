@@ -43,96 +43,92 @@
         <!-- 拖放区域 -->
         <Grid Grid.Row="1" x:Name="DropZone" Padding="16">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- 提示文本 -->
-            <StackPanel Grid.Row="0" 
-                       x:Name="EmptyStatePanel"
-                       VerticalAlignment="Center"
+            <!-- 内容区域 -->
+            <Grid Grid.Row="0">
+                <!-- 空状态提示 -->
+                <StackPanel x:Name="EmptyStatePanel"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center">
+                    <TextBlock Text="Drop items here" 
+                              FontSize="18"
+                              FontWeight="SemiBold"
+                              Foreground="#B0B0B0"
+                              HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- 最新项目显示 -->
+                <Grid x:Name="LatestItemPanel"
+                     Visibility="Collapsed"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center">
+                    <Grid x:Name="LatestItemContainer"
+                         Width="180"
+                         Height="180"
+                         Background="#50000000"
+                         CornerRadius="12"
+                         CanDrag="True"
+                         DragStarting="LatestItem_DragStarting">
+                        
+                        <!-- 图片缩略图 -->
+                        <Border CornerRadius="12">
+                            <Image x:Name="LatestThumbnail"
+                                  Visibility="Collapsed"
+                                  Stretch="UniformToFill"/>
+                        </Border>
+                        
+                        <!-- 文件图标 -->
+                        <StackPanel x:Name="LatestIcon"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center">
+                            <FontIcon x:Name="LatestIconGlyph"
+                                     FontSize="64"
+                                     Foreground="#B0B0B0"
+                                     HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="LatestItemName"
+                                      FontSize="13"
+                                      Foreground="White"
+                                      TextAlignment="Center"
+                                      TextTrimming="CharacterEllipsis"
+                                      MaxWidth="160"
+                                      Margin="0,12,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <!-- 底部按钮 -->
+            <StackPanel Grid.Row="1" 
+                       Orientation="Horizontal"
                        HorizontalAlignment="Center"
-                       Margin="0,30,0,0">
-                <TextBlock Text="Drop items here" 
-                          FontSize="18"
-                          FontWeight="SemiBold"
-                          Foreground="#B0B0B0"
-                          HorizontalAlignment="Center"
-                          Margin="0,0,0,16"/>
-                
+                       Spacing="8">
                 <Border Background="#40000000"
                        CornerRadius="6"
-                       Padding="12,6"
-                       HorizontalAlignment="Center">
+                       Padding="12,6">
                     <TextBlock x:Name="ItemCountText"
                               Text="0 items"
                               FontSize="12"
                               Foreground="#C0C0C0"/>
                 </Border>
+                
+                <Button x:Name="ShowAllButton"
+                       Content="查看全部"
+                       Click="ShowAllButton_Click"
+                       Background="#40000000"
+                       Foreground="White"
+                       BorderThickness="0"
+                       CornerRadius="6"
+                       Padding="16,6"
+                       Visibility="Collapsed">
+                    <Button.Resources>
+                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#50000000"/>
+                        <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#60000000"/>
+                    </Button.Resources>
+                </Button>
             </StackPanel>
-
-            <!-- 项目列表 -->
-            <ScrollViewer Grid.Row="1" 
-                         Margin="0,20,0,0"
-                         VerticalScrollBarVisibility="Auto">
-                <ItemsControl x:Name="ItemsListView" ItemsSource="{x:Bind Items, Mode=OneWay}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="local:DropItem">
-                            <Grid Margin="0,0,0,8"
-                                 Background="#50000000"
-                                 CornerRadius="8"
-                                 Padding="12"
-                                 CanDrag="True"
-                                 DragStarting="Item_DragStarting"
-                                 AllowDrop="False">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <!-- 图标 -->
-                                <FontIcon Grid.Column="0"
-                                         Glyph="{x:Bind IconGlyph}"
-                                         FontSize="20"
-                                         Foreground="#808080"
-                                         Margin="0,0,12,0"/>
-
-                                <!-- 文件信息 -->
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="{x:Bind Name}"
-                                              Foreground="White"
-                                              FontSize="14"
-                                              TextTrimming="CharacterEllipsis"/>
-                                    <TextBlock Text="{x:Bind Description}"
-                                              Foreground="#808080"
-                                              FontSize="12"
-                                              TextTrimming="CharacterEllipsis"
-                                              Margin="0,2,0,0"/>
-                                </StackPanel>
-
-                                <!-- 删除按钮 -->
-                                <Button Grid.Column="2"
-                                       Content="&#xE711;"
-                                       FontFamily="Segoe MDL2 Assets"
-                                       Width="32"
-                                       Height="32"
-                                       Background="Transparent"
-                                       Foreground="#808080"
-                                       BorderThickness="0"
-                                       Click="DeleteItem_Click"
-                                       Tag="{x:Bind}">
-                                    <Button.Resources>
-                                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#3D3D3D"/>
-                                        <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#4D4D4D"/>
-                                        <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
-                                    </Button.Resources>
-                                </Button>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
         </Grid>
 
         <!-- 拖放提示边框 -->
