@@ -9,10 +9,15 @@
     mc:Ignorable="d"
     Title="DropBox">
 
+    <Window.SystemBackdrop>
+        <DesktopAcrylicBackdrop/>
+    </Window.SystemBackdrop>
+
     <Grid x:Name="RootGrid" 
-          Background="#1E1E1E"
+          Background="Transparent"
           AllowDrop="True"
           DragOver="Grid_DragOver"
+          DragLeave="Grid_DragLeave"
           Drop="Grid_Drop"
           CornerRadius="8">
         
@@ -55,14 +60,14 @@
                           HorizontalAlignment="Center"
                           Margin="0,0,0,16"/>
                 
-                <Border Background="#2D2D2D"
+                <Border Background="#40000000"
                        CornerRadius="6"
                        Padding="12,6"
                        HorizontalAlignment="Center">
                     <TextBlock x:Name="ItemCountText"
                               Text="0 items"
                               FontSize="12"
-                              Foreground="#808080"/>
+                              Foreground="#C0C0C0"/>
                 </Border>
             </StackPanel>
 
@@ -74,7 +79,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="local:DropItem">
                             <Grid Margin="0,0,0,8"
-                                 Background="#2D2D2D"
+                                 Background="#50000000"
                                  CornerRadius="8"
                                  Padding="12"
                                  CanDrag="True"
@@ -130,31 +135,14 @@
             </ScrollViewer>
         </Grid>
 
-        <!-- 拖放提示覆盖层 -->
+        <!-- 拖放提示边框 -->
         <Border x:Name="DragOverlay"
                Grid.RowSpan="2"
-               Background="#80000000"
+               Background="Transparent"
+               BorderBrush="#4A9EFF"
+               BorderThickness="0"
                Visibility="Collapsed"
                CornerRadius="8"
-               IsHitTestVisible="False">
-            <Border Background="#3D3D3D"
-                   BorderBrush="#4A9EFF"
-                   BorderThickness="2"
-                   CornerRadius="8"
-                   Margin="20"
-                   Padding="40">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <FontIcon Glyph="&#xE896;"
-                             FontSize="48"
-                             Foreground="#4A9EFF"
-                             HorizontalAlignment="Center"/>
-                    <TextBlock Text="释放以添加项目"
-                              FontSize="20"
-                              Foreground="White"
-                              HorizontalAlignment="Center"
-                              Margin="0,16,0,0"/>
-                </StackPanel>
-            </Border>
-        </Border>
+               IsHitTestVisible="False"/>
     </Grid>
 </Window>

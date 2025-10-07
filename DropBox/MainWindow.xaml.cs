@@ -27,7 +27,7 @@ namespace DropBox
             Items.CollectionChanged += Items_CollectionChanged;
             
             // 设置窗口大小和样式
-            SetWindowSize(320, 315);
+            SetWindowSize(318, 315);
             ConfigureWindow();
         }
 
@@ -93,11 +93,19 @@ namespace DropBox
             e.DragUIOverride.IsContentVisible = true;
             e.DragUIOverride.IsGlyphVisible = true;
             
+            DragOverlay.BorderThickness = new Thickness(2);
             DragOverlay.Visibility = Visibility.Visible;
+        }
+
+        private void Grid_DragLeave(object sender, DragEventArgs e)
+        {
+            DragOverlay.BorderThickness = new Thickness(0);
+            DragOverlay.Visibility = Visibility.Collapsed;
         }
 
         private async void Grid_Drop(object sender, DragEventArgs e)
         {
+            DragOverlay.BorderThickness = new Thickness(0);
             DragOverlay.Visibility = Visibility.Collapsed;
             
             try
