@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36408.4 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "DropBox (Package)", "DropBox (Package)\DropBox (Package).wapproj", "{4D8FCE5A-272C-4366-8973-30A762C42466}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DropBox", "DropBox\DropBox.csproj", "{B2FDF749-A8CE-470C-A997-10A12FC28D8E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM64 = Debug|ARM64
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|ARM64 = Release|ARM64
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Debug|ARM64.Build.0 = Debug|ARM64
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Debug|x64.ActiveCfg = Debug|x64
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Debug|x64.Build.0 = Debug|x64
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Debug|x64.Deploy.0 = Debug|x64
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Debug|x86.ActiveCfg = Debug|x86
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Debug|x86.Build.0 = Debug|x86
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Debug|x86.Deploy.0 = Debug|x86
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Release|ARM64.ActiveCfg = Release|ARM64
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Release|ARM64.Build.0 = Release|ARM64
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Release|ARM64.Deploy.0 = Release|ARM64
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Release|x64.ActiveCfg = Release|x64
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Release|x64.Build.0 = Release|x64
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Release|x64.Deploy.0 = Release|x64
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Release|x86.ActiveCfg = Release|x86
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Release|x86.Build.0 = Release|x86
+		{4D8FCE5A-272C-4366-8973-30A762C42466}.Release|x86.Deploy.0 = Release|x86
+		{B2FDF749-A8CE-470C-A997-10A12FC28D8E}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{B2FDF749-A8CE-470C-A997-10A12FC28D8E}.Debug|ARM64.Build.0 = Debug|ARM64
+		{B2FDF749-A8CE-470C-A997-10A12FC28D8E}.Debug|x64.ActiveCfg = Debug|x64
+		{B2FDF749-A8CE-470C-A997-10A12FC28D8E}.Debug|x64.Build.0 = Debug|x64
+		{B2FDF749-A8CE-470C-A997-10A12FC28D8E}.Debug|x86.ActiveCfg = Debug|x86
+		{B2FDF749-A8CE-470C-A997-10A12FC28D8E}.Debug|x86.Build.0 = Debug|x86
+		{B2FDF749-A8CE-470C-A997-10A12FC28D8E}.Release|ARM64.ActiveCfg = Release|ARM64
+		{B2FDF749-A8CE-470C-A997-10A12FC28D8E}.Release|ARM64.Build.0 = Release|ARM64
+		{B2FDF749-A8CE-470C-A997-10A12FC28D8E}.Release|x64.ActiveCfg = Release|x64
+		{B2FDF749-A8CE-470C-A997-10A12FC28D8E}.Release|x64.Build.0 = Release|x64
+		{B2FDF749-A8CE-470C-A997-10A12FC28D8E}.Release|x86.ActiveCfg = Release|x86
+		{B2FDF749-A8CE-470C-A997-10A12FC28D8E}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BD6356C2-B8FF-4AD2-A6CE-04530D1CD635}
+	EndGlobalSection
+EndGlobal
