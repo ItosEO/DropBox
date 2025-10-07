@@ -200,7 +200,7 @@ namespace DropBox
             Items.Add(dropItem);
         }
 
-        private void Item_DragStarting(UIElement sender, DragStartingEventArgs args)
+        private async void Item_DragStarting(UIElement sender, DragStartingEventArgs args)
         {
             if (sender is Grid grid && grid.DataContext is DropItem item)
             {
@@ -231,6 +231,11 @@ namespace DropBox
                         case DropItemType.Bitmap:
                             if (item.BitmapStream != null)
                             {
+                                // 创建临时文件供资源管理器接收
+                                var tempFile = await CreateTempFileFromBitmap(item.BitmapStream);
+                                args.Data.SetStorageItems(new List<IStorageItem> { tempFile });
+                                
+                                // 同时提供位图格式供其他应用使用
                                 args.Data.SetBitmap(RandomAccessStreamReference.CreateFromStream(item.BitmapStream));
                             }
                             break;
@@ -243,6 +248,20 @@ namespace DropBox
                     deferral.Complete();
                 }
             }
+        }
+
+        private async Task<StorageFile> CreateTempFileFromBitmap(IRandomAccessStream bitmapStream)
+        {
+            var tempFolder = ApplicationData.Current.TemporaryFolder;
+            var fileName = $"temp_image_{Guid.NewGuid()}.png";
+            var tempFile = await tempFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+            
+            using (var fileStream = await tempFile.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                await RandomAccessStream.CopyAsync(bitmapStream, fileStream);
+            }
+            
+            return tempFile;
         }
 
         private void DeleteItem_Click(object sender, RoutedEventArgs e)
