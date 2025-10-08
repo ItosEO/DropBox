@@ -6,27 +6,49 @@
     xmlns:local="using:DropBox"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Title="所有项目">
+    mc:Ignorable="d">
 
     <Window.SystemBackdrop>
         <DesktopAcrylicBackdrop/>
     </Window.SystemBackdrop>
 
-    <Grid Background="Transparent">
+    <Grid Background="Transparent"
+          AllowDrop="True"
+          DragOver="Grid_DragOver"
+          Drop="Grid_Drop">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- 标题栏 -->
-        <Grid Grid.Row="0" Height="40" Background="#2D2D2D">
-            <TextBlock Text="所有暂存项目" 
-                      VerticalAlignment="Center" 
-                      Margin="16,0"
-                      Foreground="White"
-                      FontSize="14"
-                      FontWeight="SemiBold"/>
+        <!-- 自定义标题栏（只有关闭按钮） -->
+        <Grid Grid.Row="0" Height="32" Background="#2D2D2D" x:Name="CustomTitleBar">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- 空白拖动区域 -->
+            <Grid Grid.Column="0" x:Name="DragRegion" Background="Transparent"/>
+            
+            <!-- 关闭按钮 -->
+            <Button Grid.Column="1"
+                    Width="46"
+                    Height="32"
+                    Content="&#xE8BB;"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="10"
+                    Background="Transparent"
+                    Foreground="White"
+                    BorderThickness="0"
+                    Click="CloseButton_Click">
+                <Button.Resources>
+                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#E81123"/>
+                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#C50F1F"/>
+                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
+                    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White"/>
+                </Button.Resources>
+            </Button>
         </Grid>
 
         <!-- 内容区域 -->
@@ -76,10 +98,11 @@
 
                             <!-- 删除按钮 -->
                             <Button Grid.Column="2"
-                                   Content="&#xE711;"
-                                   FontFamily="Segoe MDL2 Assets"
                                    Width="32"
                                    Height="32"
+                                   Padding="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
                                    Background="Transparent"
                                    Foreground="#808080"
                                    BorderThickness="0"
@@ -90,6 +113,7 @@
                                     <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#4D4D4D"/>
                                     <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
                                 </Button.Resources>
+                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE711;" FontSize="10"/>
                             </Button>
                         </Grid>
                     </DataTemplate>

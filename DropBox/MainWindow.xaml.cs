@@ -108,6 +108,7 @@ namespace DropBox
                     LatestThumbnail.Source = bitmapImage;
                     LatestThumbnail.Visibility = Visibility.Visible;
                     LatestIcon.Visibility = Visibility.Collapsed;
+                    ApplyRoundedClipTo(LatestThumbnail, LatestItemCard);
                 }
                 catch
                 {
@@ -129,6 +130,7 @@ namespace DropBox
                         LatestThumbnail.Source = bitmapImage;
                         LatestThumbnail.Visibility = Visibility.Visible;
                         LatestIcon.Visibility = Visibility.Collapsed;
+                        ApplyRoundedClipTo(LatestThumbnail, LatestItemCard);
                     }
                     catch
                     {
@@ -147,6 +149,16 @@ namespace DropBox
                 LatestThumbnail.Visibility = Visibility.Collapsed;
                 LatestIcon.Visibility = Visibility.Visible;
             }
+        }
+
+        private void LatestItemCard_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // 圆角裁剪由 Border 元素自动处理
+        }
+
+        private static void ApplyRoundedClipTo(Image image, FrameworkElement host)
+        {
+            // 不需要手动裁剪，Border 会自动处理圆角
         }
 
         private void Grid_DragOver(object sender, DragEventArgs e)
@@ -338,11 +350,8 @@ namespace DropBox
 
         private void ShowAllButton_Click(object sender, RoutedEventArgs e)
         {
-            var allItemsWindow = new AllItemsWindow(Items, (item) =>
-            {
-                Items.Remove(item);
-            });
-            allItemsWindow.Activate();
+            // MainWindow 已不再作为主窗口使用
+            // 此功能已移至 AllItemsWindow
         }
 
         private async void LatestItem_DragStarting(UIElement sender, DragStartingEventArgs args)
