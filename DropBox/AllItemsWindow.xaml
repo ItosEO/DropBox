@@ -12,10 +12,14 @@
         <DesktopAcrylicBackdrop/>
     </Window.SystemBackdrop>
 
-    <Grid Background="Transparent"
-          AllowDrop="True"
+    <Grid AllowDrop="True"
           DragOver="Grid_DragOver"
           Drop="Grid_Drop">
+        <!-- 背景遮罩层 -->
+        <Grid.Background>
+            <SolidColorBrush Color="Black" Opacity="0.2"/>
+        </Grid.Background>
+        
         <Grid.Resources>
             <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
             <local:NullToVisibilityConverter x:Key="NullToVisibilityConverterInverted" Inverted="True"/>
