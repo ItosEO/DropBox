@@ -78,7 +78,7 @@
                                                Width="3"
                                                Height="16"
                                                Background="Transparent"
-                                               CornerRadius="0,1.5,1.5,0"
+                                               CornerRadius="1.5"
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
                                                Margin="0,0,0,0"/>
