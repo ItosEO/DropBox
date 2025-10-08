@@ -9,7 +9,7 @@
 
   <Identity
     Name="366bab17-6be5-48be-9c31-afdeec2e8ab7"
-    Publisher="CN=22655"
+    Publisher="CN=ItosEO"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="366bab17-6be5-48be-9c31-afdeec2e8ab7" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
