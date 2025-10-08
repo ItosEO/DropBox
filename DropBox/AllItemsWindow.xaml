@@ -50,7 +50,8 @@
                  CanDragItems="True"
                  DragItemsStarting="ListView_DragItemsStarting"
                  Background="Transparent"
-                 PointerPressed="ListView_PointerPressed">
+                 PointerPressed="ListView_PointerPressed"
+                 Padding="8,0">
             <ListView.Resources>
                 <SolidColorBrush x:Key="ListViewItemBackgroundSelected" Color="#0078D4"/>
                 <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver" Color="#106EBE"/>
@@ -85,39 +86,76 @@
                                                CornerRadius="1.5"
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
-                                               Margin="0,0,0,0"/>
+                                               Margin="0,0,0,0"
+                                               RenderTransformOrigin="0.5,0.5">
+                                            <Border.RenderTransform>
+                                                <ScaleTransform x:Name="IndicatorScale" ScaleY="0"/>
+                                            </Border.RenderTransform>
+                                        </Border>
                                     </Grid>
                                     
                                     <VisualStateManager.VisualStateGroups>
                                         <VisualStateGroup x:Name="CommonStates">
-                                            <VisualState x:Name="Normal"/>
+                                            <VisualState x:Name="Normal">
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="IndicatorScale"
+                                                                   Storyboard.TargetProperty="ScaleY"
+                                                                   To="0"
+                                                                   Duration="0:0:0.15">
+                                                        <DoubleAnimation.EasingFunction>
+                                                            <CubicEase EasingMode="EaseInOut"/>
+                                                        </DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                </Storyboard>
+                                            </VisualState>
                                             <VisualState x:Name="PointerOver">
                                                 <VisualState.Setters>
-                                                    <Setter Target="Root.Background" Value="#0FFFFFFF"/>
+                                                    <Setter Target="Root.Background" Value="#08FFFFFF"/>
                                                 </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="Pressed">
                                                 <VisualState.Setters>
-                                                    <Setter Target="Root.Background" Value="#1AFFFFFF"/>
+                                                    <Setter Target="Root.Background" Value="#10FFFFFF"/>
                                                 </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="Selected">
                                                 <VisualState.Setters>
                                                     <Setter Target="SelectionIndicator.Background" Value="#0078D4"/>
-                                                    <Setter Target="Root.Background" Value="#0FFFFFFF"/>
+                                                    <Setter Target="Root.Background" Value="#08FFFFFF"/>
                                                 </VisualState.Setters>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="IndicatorScale"
+                                                                   Storyboard.TargetProperty="ScaleY"
+                                                                   To="1"
+                                                                   Duration="0:0:0.2">
+                                                        <DoubleAnimation.EasingFunction>
+                                                            <BackEase EasingMode="EaseOut" Amplitude="0.3"/>
+                                                        </DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                </Storyboard>
                                             </VisualState>
                                             <VisualState x:Name="PointerOverSelected">
                                                 <VisualState.Setters>
                                                     <Setter Target="SelectionIndicator.Background" Value="#0078D4"/>
-                                                    <Setter Target="Root.Background" Value="#1AFFFFFF"/>
+                                                    <Setter Target="Root.Background" Value="#10FFFFFF"/>
+                                                    <Setter Target="IndicatorScale.ScaleY" Value="1"/>
                                                 </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="PressedSelected">
                                                 <VisualState.Setters>
                                                     <Setter Target="SelectionIndicator.Background" Value="#005A9E"/>
-                                                    <Setter Target="Root.Background" Value="#25FFFFFF"/>
+                                                    <Setter Target="Root.Background" Value="#18FFFFFF"/>
                                                 </VisualState.Setters>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="IndicatorScale"
+                                                                   Storyboard.TargetProperty="ScaleY"
+                                                                   To="0.7"
+                                                                   Duration="0:0:0.1">
+                                                        <DoubleAnimation.EasingFunction>
+                                                            <CircleEase EasingMode="EaseOut"/>
+                                                        </DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                </Storyboard>
                                             </VisualState>
                                         </VisualStateGroup>
                                     </VisualStateManager.VisualStateGroups>
