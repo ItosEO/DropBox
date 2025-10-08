@@ -456,5 +456,6 @@ namespace DropBox
         public StorageFolder? StorageFolder { get; set; }
         public IRandomAccessStream? BitmapStream { get; set; }
         public BitmapImage? Thumbnail { get; set; }
+        public string SizeText { get; set; } = string.Empty;
     }
 }

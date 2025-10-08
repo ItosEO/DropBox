@@ -45,7 +45,7 @@ namespace DropBox
             UpdateTitle();
         }
 
-        private void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateTitle();
         }
@@ -101,50 +101,40 @@ namespace DropBox
             }
         }
 
-        private async void Item_DragStarting(UIElement sender, DragStartingEventArgs args)
+        private void ListView_DragItemsStarting(object sender, DragItemsStartingEventArgs args)
         {
-            if (sender is Grid grid && grid.DataContext is DropItem item)
+            if (args.Items.Count > 0 && args.Items[0] is DropItem item)
             {
-                var deferral = args.GetDeferral();
-
-                try
+                switch (item.Type)
                 {
-                    switch (item.Type)
-                    {
-                        case DropItemType.File:
-                            if (item.StorageFile != null)
-                            {
-                                args.Data.SetStorageItems(new System.Collections.Generic.List<IStorageItem> { item.StorageFile });
-                            }
-                            break;
+                    case DropItemType.File:
+                        if (item.StorageFile != null)
+                        {
+                            args.Data.SetStorageItems(new System.Collections.Generic.List<IStorageItem> { item.StorageFile });
+                        }
+                        break;
 
-                        case DropItemType.Folder:
-                            if (item.StorageFolder != null)
-                            {
-                                args.Data.SetStorageItems(new System.Collections.Generic.List<IStorageItem> { item.StorageFolder });
-                            }
-                            break;
+                    case DropItemType.Folder:
+                        if (item.StorageFolder != null)
+                        {
+                            args.Data.SetStorageItems(new System.Collections.Generic.List<IStorageItem> { item.StorageFolder });
+                        }
+                        break;
 
-                        case DropItemType.Text:
-                            args.Data.SetText(item.TextContent);
-                            break;
+                    case DropItemType.Text:
+                        args.Data.SetText(item.TextContent);
+                        break;
 
-                        case DropItemType.Bitmap:
-                            if (item.BitmapStream != null)
-                            {
-                                var tempFile = await CreateTempFileFromBitmap(item.BitmapStream);
-                                args.Data.SetStorageItems(new System.Collections.Generic.List<IStorageItem> { tempFile });
-                                args.Data.SetBitmap(RandomAccessStreamReference.CreateFromStream(item.BitmapStream));
-                            }
-                            break;
-                    }
-
-                    args.Data.RequestedOperation = DataPackageOperation.Copy;
+                    case DropItemType.Bitmap:
+                        if (item.BitmapStream != null)
+                        {
+                            args.Data.SetStorageItems(new List<IStorageItem>());
+                            args.Data.SetBitmap(RandomAccessStreamReference.CreateFromStream(item.BitmapStream));
+                        }
+                        break;
                 }
-                finally
-                {
-                    deferral.Complete();
-                }
+
+                args.Data.RequestedOperation = DataPackageOperation.Copy;
             }
         }
 
@@ -162,9 +152,22 @@ namespace DropBox
             return tempFile;
         }
 
-        private void DeleteItem_Click(object sender, RoutedEventArgs e)
+        private void ContextMenu_Opening(object sender, object e)
         {
-            if (sender is Button button && button.Tag is DropItem item)
+            if (sender is MenuFlyout menuFlyout && menuFlyout.Target is FrameworkElement element)
+            {
+                // 获取右键点击的项目
+                if (element.DataContext is DropItem item)
+                {
+                    // 选中该项目
+                    ItemsListView.SelectedItem = item;
+                }
+            }
+        }
+
+        private void DeleteMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem menuItem && menuItem.Tag is DropItem item)
             {
                 Items.Remove(item);
             }
@@ -223,7 +226,8 @@ namespace DropBox
                     IconGlyph = GetFileIconGlyph(file.FileType),
                     Type = DropItemType.File,
                     FilePath = file.Path,
-                    StorageFile = file
+                    StorageFile = file,
+                    SizeText = size
                 };
 
                 // 尝试加载缩略图
@@ -240,7 +244,8 @@ namespace DropBox
                     IconGlyph = "\uE8B7",
                     Type = DropItemType.Folder,
                     FilePath = folder.Path,
-                    StorageFolder = folder
+                    StorageFolder = folder,
+                    SizeText = string.Empty
                 };
 
                 // 尝试加载文件夹缩略图
@@ -319,13 +324,16 @@ namespace DropBox
         private void AddTextItem(string text)
         {
             var preview = text.Length > 50 ? text.Substring(0, 50) + "..." : text;
+            var size = System.Text.Encoding.UTF8.GetByteCount(text);
+            
             var dropItem = new DropItem
             {
-                Name = "文本内容",
+                Name = preview,
                 Description = preview,
                 IconGlyph = "\uE8A5",
                 Type = DropItemType.Text,
-                TextContent = text
+                TextContent = text,
+                SizeText = FormatFileSize((ulong)size)
             };
 
             Items.Add(dropItem);
@@ -335,14 +343,16 @@ namespace DropBox
         {
             using var stream = await bitmapRef.OpenReadAsync();
             var clonedStream = stream.CloneStream();
+            var size = FormatFileSize(stream.Size);
             
             var dropItem = new DropItem
             {
                 Name = "图片",
-                Description = $"位图 · {FormatFileSize(stream.Size)}",
+                Description = $"位图 · {size}",
                 IconGlyph = "\uEB9F",
                 Type = DropItemType.Bitmap,
-                BitmapStream = clonedStream
+                BitmapStream = clonedStream,
+                SizeText = size
             };
 
             // 为位图创建缩略图
