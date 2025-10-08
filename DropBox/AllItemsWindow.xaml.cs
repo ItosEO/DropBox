@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
@@ -25,8 +26,26 @@ namespace DropBox
             ItemsListView.ItemsSource = Items;
 
             // 设置窗口大小
-            SetWindowSize(500, 600);
+            SetWindowSize(600, 500);
+            
+            // 扩展内容到标题栏
+            ExtendsContentIntoTitleBar = true;
+            // 设置标题栏拖动区域
+            SetTitleBar(DragRegion);
+            
             ConfigureWindow();
+
+            // 监听窗口激活状态，实现永不失焦
+            this.Activated += AllItemsWindow_Activated;
+        }
+
+        private void AllItemsWindow_Activated(object sender, WindowActivatedEventArgs args)
+        {
+            // 当窗口失去焦点时（Deactivated），立即重新激活
+            if (args.WindowActivationState == WindowActivationState.Deactivated)
+            {
+                this.Activate();
+            }
         }
 
         private void SetWindowSize(int width, int height)
@@ -40,32 +59,29 @@ namespace DropBox
 
         private void ConfigureWindow()
         {
-            ExtendsContentIntoTitleBar = true;
-            SetTitleBar(DragRegion);
-
             var hWnd = WindowNative.GetWindowHandle(this);
             var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = AppWindow.GetFromWindowId(windowId);
 
+            // 使用 Presenter 来设置窗口样式
             if (appWindow.Presenter is OverlappedPresenter presenter)
             {
+                // 禁用最小化和最大化按钮
+                presenter.IsMaximizable = false;
+                presenter.IsMinimizable = false;
+                // 设置窗口始终置顶
                 presenter.IsAlwaysOnTop = true;
             }
 
+            // 配置标题栏外观
             if (appWindow.TitleBar != null)
             {
                 appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
                 appWindow.TitleBar.ButtonBackgroundColor = Microsoft.UI.Colors.Transparent;
                 appWindow.TitleBar.ButtonInactiveBackgroundColor = Microsoft.UI.Colors.Transparent;
-                
-                // 隐藏系统标题栏按钮
-                appWindow.TitleBar.IconShowOptions = IconShowOptions.HideIconAndSystemMenu;
+                appWindow.TitleBar.ButtonHoverBackgroundColor = Windows.UI.Color.FromArgb(255, 232, 17, 35);
+                appWindow.TitleBar.ButtonPressedBackgroundColor = Windows.UI.Color.FromArgb(255, 197, 15, 31);
             }
-        }
-
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
         }
 
         private async void Item_DragStarting(UIElement sender, DragStartingEventArgs args)
@@ -193,6 +209,9 @@ namespace DropBox
                     StorageFile = file
                 };
 
+                // 尝试加载缩略图
+                await LoadThumbnailAsync(dropItem, file);
+
                 Items.Add(dropItem);
             }
             else if (item is StorageFolder folder)
@@ -208,6 +227,28 @@ namespace DropBox
                 };
 
                 Items.Add(dropItem);
+            }
+        }
+
+        private async Task LoadThumbnailAsync(DropItem dropItem, StorageFile file)
+        {
+            try
+            {
+                var thumbnail = await file.GetThumbnailAsync(
+                    Windows.Storage.FileProperties.ThumbnailMode.SingleItem,
+                    48,
+                    Windows.Storage.FileProperties.ThumbnailOptions.UseCurrentScale);
+
+                if (thumbnail != null && thumbnail.Type == Windows.Storage.FileProperties.ThumbnailType.Image)
+                {
+                    var bitmapImage = new BitmapImage();
+                    await bitmapImage.SetSourceAsync(thumbnail);
+                    dropItem.Thumbnail = bitmapImage;
+                }
+            }
+            catch
+            {
+                // 如果加载缩略图失败，保持使用图标
             }
         }
 
@@ -229,14 +270,28 @@ namespace DropBox
         private async Task AddBitmapItem(RandomAccessStreamReference bitmapRef)
         {
             using var stream = await bitmapRef.OpenReadAsync();
+            var clonedStream = stream.CloneStream();
+            
             var dropItem = new DropItem
             {
                 Name = "图片",
                 Description = $"位图 · {FormatFileSize(stream.Size)}",
                 IconGlyph = "\uEB9F",
                 Type = DropItemType.Bitmap,
-                BitmapStream = stream.CloneStream()
+                BitmapStream = clonedStream
             };
+
+            // 为位图创建缩略图
+            try
+            {
+                var bitmapImage = new BitmapImage();
+                await bitmapImage.SetSourceAsync(clonedStream);
+                dropItem.Thumbnail = bitmapImage;
+            }
+            catch
+            {
+                // 如果加载失败，保持使用图标
+            }
 
             Items.Add(dropItem);
         }
@@ -273,6 +328,23 @@ namespace DropBox
             }
 
             return $"{len:0.##} {sizes[order]}";
+        }
+    }
+
+    public class NullToVisibilityConverter : IValueConverter
+    {
+        public bool Inverted { get; set; }
+
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            bool isNull = value == null;
+            bool isVisible = Inverted ? isNull : !isNull;
+            return isVisible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
         }
     }
 }

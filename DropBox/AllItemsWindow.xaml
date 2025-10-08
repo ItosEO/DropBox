@@ -16,39 +16,26 @@
           AllowDrop="True"
           DragOver="Grid_DragOver"
           Drop="Grid_Drop">
+        <Grid.Resources>
+            <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+            <local:NullToVisibilityConverter x:Key="NullToVisibilityConverterInverted" Inverted="True"/>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- 自定义标题栏（只有关闭按钮） -->
-        <Grid Grid.Row="0" Height="32" Background="#2D2D2D" x:Name="CustomTitleBar">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            
-            <!-- 空白拖动区域 -->
-            <Grid Grid.Column="0" x:Name="DragRegion" Background="Transparent"/>
-            
-            <!-- 关闭按钮 -->
-            <Button Grid.Column="1"
-                    Width="46"
-                    Height="32"
-                    Content="&#xE8BB;"
-                    FontFamily="Segoe MDL2 Assets"
-                    FontSize="10"
-                    Background="Transparent"
-                    Foreground="White"
-                    BorderThickness="0"
-                    Click="CloseButton_Click">
-                <Button.Resources>
-                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#E81123"/>
-                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#C50F1F"/>
-                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
-                    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White"/>
-                </Button.Resources>
-            </Button>
+        <!-- 标题栏拖动区域 -->
+        <Grid Grid.Row="0" 
+              x:Name="DragRegion"
+              Height="32" 
+              Background="Transparent">
+            <TextBlock Text="DropBox"
+                      Foreground="White"
+                      FontSize="12"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Center"
+                      IsHitTestVisible="False"/>
         </Grid>
 
         <!-- 内容区域 -->
@@ -70,17 +57,17 @@
 
                             <!-- 图标/缩略图 -->
                             <Grid Grid.Column="0" Width="48" Height="48" Margin="0,0,12,0">
-                                <Border CornerRadius="4">
-                                    <Image x:Name="ItemThumbnail"
-                                          Visibility="Collapsed"
+                                <Border CornerRadius="4"
+                                       Visibility="{Binding Thumbnail, Converter={StaticResource NullToVisibilityConverter}}">
+                                    <Image Source="{Binding Thumbnail}"
                                           Stretch="UniformToFill"/>
                                 </Border>
-                                <FontIcon x:Name="ItemIcon"
-                                         Glyph="{x:Bind IconGlyph}"
+                                <FontIcon Glyph="{x:Bind IconGlyph}"
                                          FontSize="24"
                                          Foreground="#808080"
                                          HorizontalAlignment="Center"
-                                         VerticalAlignment="Center"/>
+                                         VerticalAlignment="Center"
+                                         Visibility="{Binding Thumbnail, Converter={StaticResource NullToVisibilityConverterInverted}}"/>
                             </Grid>
 
                             <!-- 文件信息 -->
