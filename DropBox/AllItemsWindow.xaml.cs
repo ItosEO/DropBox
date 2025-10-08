@@ -25,8 +25,11 @@ namespace DropBox
             Items = new ObservableCollection<DropItem>();
             ItemsListView.ItemsSource = Items;
 
+            // 监听集合变化以更新标题
+            Items.CollectionChanged += Items_CollectionChanged;
+
             // 设置窗口大小
-            SetWindowSize(600, 500);
+            SetWindowSize(700, 550);
             
             // 扩展内容到标题栏
             ExtendsContentIntoTitleBar = true;
@@ -37,6 +40,20 @@ namespace DropBox
 
             // 监听窗口激活状态，实现永不失焦
             this.Activated += AllItemsWindow_Activated;
+
+            // 初始化标题
+            UpdateTitle();
+        }
+
+        private void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateTitle();
+        }
+
+        private void UpdateTitle()
+        {
+            var count = Items.Count;
+            TitleTextBlock.Text = $"{count} {(count == 1 ? "item" : "items")}";
         }
 
         private void AllItemsWindow_Activated(object sender, WindowActivatedEventArgs args)

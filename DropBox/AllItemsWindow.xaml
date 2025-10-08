@@ -30,7 +30,7 @@
               x:Name="DragRegion"
               Height="32" 
               Background="Transparent">
-            <TextBlock Text="DropBox"
+            <TextBlock x:Name="TitleTextBlock"
                       Foreground="White"
                       FontSize="12"
                       VerticalAlignment="Center"
@@ -75,12 +75,20 @@
                                 <TextBlock Text="{x:Bind Name}"
                                           Foreground="White"
                                           FontSize="14"
-                                          TextTrimming="CharacterEllipsis"/>
+                                          TextTrimming="CharacterEllipsis">
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip Content="{x:Bind Name}"/>
+                                    </ToolTipService.ToolTip>
+                                </TextBlock>
                                 <TextBlock Text="{x:Bind Description}"
                                           Foreground="#808080"
                                           FontSize="12"
                                           TextTrimming="CharacterEllipsis"
-                                          Margin="0,2,0,0"/>
+                                          Margin="0,2,0,0">
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip Content="{x:Bind Description}"/>
+                                    </ToolTipService.ToolTip>
+                                </TextBlock>
                             </StackPanel>
 
                             <!-- 删除按钮 -->
