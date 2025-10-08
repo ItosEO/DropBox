@@ -226,6 +226,9 @@ namespace DropBox
                     StorageFolder = folder
                 };
 
+                // 尝试加载文件夹缩略图
+                await LoadFolderThumbnailAsync(dropItem, folder);
+
                 Items.Add(dropItem);
             }
         }
@@ -234,12 +237,34 @@ namespace DropBox
         {
             try
             {
+                // 尝试获取文件缩略图（对于图片/视频等）
                 var thumbnail = await file.GetThumbnailAsync(
                     Windows.Storage.FileProperties.ThumbnailMode.SingleItem,
                     48,
                     Windows.Storage.FileProperties.ThumbnailOptions.UseCurrentScale);
 
-                if (thumbnail != null && thumbnail.Type == Windows.Storage.FileProperties.ThumbnailType.Image)
+                if (thumbnail != null && thumbnail.Size > 0)
+                {
+                    var bitmapImage = new BitmapImage();
+                    await bitmapImage.SetSourceAsync(thumbnail);
+                    dropItem.Thumbnail = bitmapImage;
+                    return;
+                }
+            }
+            catch
+            {
+                // 继续尝试获取图标
+            }
+
+            // 如果缩略图获取失败，尝试获取文件类型图标
+            try
+            {
+                var thumbnail = await file.GetThumbnailAsync(
+                    Windows.Storage.FileProperties.ThumbnailMode.DocumentsView,
+                    48,
+                    Windows.Storage.FileProperties.ThumbnailOptions.UseCurrentScale);
+
+                if (thumbnail != null && thumbnail.Size > 0)
                 {
                     var bitmapImage = new BitmapImage();
                     await bitmapImage.SetSourceAsync(thumbnail);
@@ -248,7 +273,29 @@ namespace DropBox
             }
             catch
             {
-                // 如果加载缩略图失败，保持使用图标
+                // 如果都失败，保持使用字体图标
+            }
+        }
+
+        private async Task LoadFolderThumbnailAsync(DropItem dropItem, StorageFolder folder)
+        {
+            try
+            {
+                var thumbnail = await folder.GetThumbnailAsync(
+                    Windows.Storage.FileProperties.ThumbnailMode.SingleItem,
+                    48,
+                    Windows.Storage.FileProperties.ThumbnailOptions.UseCurrentScale);
+
+                if (thumbnail != null && thumbnail.Size > 0)
+                {
+                    var bitmapImage = new BitmapImage();
+                    await bitmapImage.SetSourceAsync(thumbnail);
+                    dropItem.Thumbnail = bitmapImage;
+                }
+            }
+            catch
+            {
+                // 如果加载失败，保持使用字体图标
             }
         }
 
