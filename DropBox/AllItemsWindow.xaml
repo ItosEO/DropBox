@@ -56,32 +56,31 @@
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="Padding" Value="0,8,12,8"/>
-                    <Setter Property="Margin" Value="0"/>
-                    <Setter Property="MinHeight" Value="48"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Margin" Value="4,0.5"/>
+                    <Setter Property="MinHeight" Value="28"/>
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="ListViewItem">
-                                <Grid x:Name="Root">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="4"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    
-                                    <!-- 选中指示器（左侧小竖条） -->
-                                    <Rectangle x:Name="SelectionIndicator"
-                                             Grid.Column="0"
-                                             Fill="Transparent"
-                                             VerticalAlignment="Stretch"/>
-                                    
-                                    <!-- 内容区域 -->
-                                    <Grid Grid.Column="1"
-                                         x:Name="ContentGrid"
-                                         Padding="12,0,0,0"
-                                         Background="Transparent">
+                                <Border x:Name="Root"
+                                       Background="Transparent"
+                                       CornerRadius="4">
+                                    <Grid>
+                                        <!-- 内容区域 -->
                                         <ContentPresenter x:Name="ContentPresenter"
+                                                        Margin="8,3"
                                                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                        
+                                        <!-- 选中指示器（左侧贴边短竖条） -->
+                                        <Border x:Name="SelectionIndicator"
+                                               Width="3"
+                                               Height="16"
+                                               Background="Transparent"
+                                               CornerRadius="0,1.5,1.5,0"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,0,0"/>
                                     </Grid>
                                     
                                     <VisualStateManager.VisualStateGroups>
@@ -89,35 +88,35 @@
                                             <VisualState x:Name="Normal"/>
                                             <VisualState x:Name="PointerOver">
                                                 <VisualState.Setters>
-                                                    <Setter Target="ContentGrid.Background" Value="#1A1A1A"/>
+                                                    <Setter Target="Root.Background" Value="#0FFFFFFF"/>
                                                 </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="Pressed">
                                                 <VisualState.Setters>
-                                                    <Setter Target="ContentGrid.Background" Value="#2A2A2A"/>
+                                                    <Setter Target="Root.Background" Value="#1AFFFFFF"/>
                                                 </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="Selected">
                                                 <VisualState.Setters>
-                                                    <Setter Target="SelectionIndicator.Fill" Value="#0078D4"/>
-                                                    <Setter Target="ContentGrid.Background" Value="#1A1A1A"/>
+                                                    <Setter Target="SelectionIndicator.Background" Value="#0078D4"/>
+                                                    <Setter Target="Root.Background" Value="#0FFFFFFF"/>
                                                 </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="PointerOverSelected">
                                                 <VisualState.Setters>
-                                                    <Setter Target="SelectionIndicator.Fill" Value="#0078D4"/>
-                                                    <Setter Target="ContentGrid.Background" Value="#2A2A2A"/>
+                                                    <Setter Target="SelectionIndicator.Background" Value="#0078D4"/>
+                                                    <Setter Target="Root.Background" Value="#1AFFFFFF"/>
                                                 </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="PressedSelected">
                                                 <VisualState.Setters>
-                                                    <Setter Target="SelectionIndicator.Fill" Value="#0078D4"/>
-                                                    <Setter Target="ContentGrid.Background" Value="#3A3A3A"/>
+                                                    <Setter Target="SelectionIndicator.Background" Value="#005A9E"/>
+                                                    <Setter Target="Root.Background" Value="#25FFFFFF"/>
                                                 </VisualState.Setters>
                                             </VisualState>
                                         </VisualStateGroup>
                                     </VisualStateManager.VisualStateGroups>
-                                </Grid>
+                                </Border>
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
@@ -165,7 +164,8 @@
                                   Foreground="White"
                                   FontSize="13"
                                   VerticalAlignment="Center"
-                                  TextTrimming="CharacterEllipsis">
+                                  TextTrimming="CharacterEllipsis"
+                                  Margin="0,0,16,0">
                             <ToolTipService.ToolTip>
                                 <ToolTip Content="{x:Bind Name}"/>
                             </ToolTipService.ToolTip>
@@ -174,10 +174,11 @@
                         <!-- 文件大小 -->
                         <TextBlock Grid.Column="2"
                                   Text="{x:Bind SizeText}"
-                                  Foreground="#808080"
-                                  FontSize="12"
+                                  Foreground="#707070"
+                                  FontSize="11"
                                   VerticalAlignment="Center"
-                                  Margin="12,0,0,0"/>
+                                  Opacity="0.9"
+                                  FontWeight="Normal"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
