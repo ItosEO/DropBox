@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -150,6 +151,31 @@ namespace DropBox
             }
 
             return tempFile;
+        }
+
+        private void ListView_PointerPressed(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            // 获取点击的原始元素
+            var clickedElement = e.OriginalSource as FrameworkElement;
+            
+            // 向上遍历可视化树，检查是否点击在 ListViewItem 上
+            bool isListViewItem = false;
+            var element = clickedElement;
+            while (element != null && element != ItemsListView)
+            {
+                if (element is ListViewItem)
+                {
+                    isListViewItem = true;
+                    break;
+                }
+                element = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetParent(element) as FrameworkElement;
+            }
+            
+            // 如果点击的是 ListView 的空白区域，取消选择
+            if (!isListViewItem)
+            {
+                ItemsListView.SelectedItem = null;
+            }
         }
 
         private void ContextMenu_Opening(object sender, object e)

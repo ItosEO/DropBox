@@ -45,7 +45,8 @@
                  CanDrag="True"
                  CanDragItems="True"
                  DragItemsStarting="ListView_DragItemsStarting"
-                 Background="Transparent">
+                 Background="Transparent"
+                 PointerPressed="ListView_PointerPressed">
             <ListView.Resources>
                 <SolidColorBrush x:Key="ListViewItemBackgroundSelected" Color="#0078D4"/>
                 <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver" Color="#106EBE"/>
